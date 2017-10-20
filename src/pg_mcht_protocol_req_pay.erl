@@ -49,7 +49,6 @@
 -export_records([?TXN]).
 
 
-
 sign_fields() ->
   [
     mcht_id
