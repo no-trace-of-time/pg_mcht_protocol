@@ -50,7 +50,6 @@
 -export_records([?P]).
 
 
-
 sign_fields() ->
   [
     mcht_id
