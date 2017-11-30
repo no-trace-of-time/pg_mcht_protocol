@@ -54,7 +54,7 @@
 
 %%-------------------------------------------------------------------
 sign_fields() ->
-  sign_fields(dcit_order).
+  sign_fields(dict_order).
 
 sign_fields(doc_order) ->
   [
