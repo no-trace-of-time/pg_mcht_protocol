@@ -60,6 +60,9 @@
 
 %%-------------------------------------------------------------------
 sign_fields() ->
+  sign_fields(dict_order).
+
+sign_fields(doc_order) ->
   [
     mcht_id
     , txn_date
@@ -73,6 +76,22 @@ sign_fields() ->
     , id_no
     , id_name
     , mobile
+
+  ];
+sign_fields(dict_order) ->
+  [
+    bank_card_no
+    , id_no
+    , id_name
+    , id_type
+    , mcht_id
+    , order_desc
+    , mobile
+    , txn_amt
+    , txn_date
+    , txn_seq
+    , txn_time
+    , back_url
 
   ].
 

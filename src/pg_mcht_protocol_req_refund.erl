@@ -10,7 +10,6 @@
 -author("jiarj").
 -include_lib("eunit/include/eunit.hrl").
 -include_lib("mixer/include/mixer.hrl").
--behaviour(pg_model).
 -behaviour(pg_protocol).
 -behaviour(pg_mcht_protocol).
 
@@ -33,14 +32,14 @@
 -define(TXN, ?MODULE).
 
 -record(?TXN, {
-  mcht_id = 9999
-  , mcht_txn_date = <<>>
-  , mcht_txn_time = <<>>
-  , mcht_txn_seq = <<"9999">>
-  , mcht_txn_amt = 0
-  , mcht_back_url
-  , orig_mcht_txn_date = <<>>
-  , orig_mcht_txn_seq = <<>>
+  id = 9999
+  , txn_date = <<>>
+  , txn_time = <<>>
+  , txn_seq = <<"9999">>
+  , txn_amt = 0
+  , back_url
+  , orig_txn_date = <<>>
+  , orig_txn_seq = <<>>
   , orig_query_id = <<>>
   , signature = <<"9">>
 }).
@@ -50,17 +49,33 @@
 -export_records([?TXN]).
 
 
+%%-------------------------------------------------------------------
 sign_fields() ->
+  sign_fields(dict_order).
+
+sign_fields(doc_order) ->
   [
     mcht_id
-    , mcht_txn_date
-    , mcht_txn_seq
-    , mcht_txn_time
-    , orig_mcht_txn_date
-    , orig_mcht_txn_seq
+    , txn_date
+    , txn_seq
+    , txn_time
+    , orig_txn_date
+    , orig_txn_seq
     , orig_query_id
-    , mcht_txn_amt
-    , mcht_back_url
+    , txn_amt
+    , back_url
+  ];
+sign_fields(dict_order) ->
+  [
+    mcht_id
+    , orig_query_id
+    , orig_txn_date
+    , orig_txn_seq
+    , txn_amt
+    , txn_date
+    , txn_seq
+    , txn_time
+    , back_url
   ].
 
 options() ->
@@ -76,8 +91,8 @@ save(M, Protocol) when is_atom(M), is_record(Protocol, ?TXN) ->
   VL = [
     {txn_type, refund}
     , {txn_status, waiting}
-    , {mcht_index_key, pg_mcht_protocol:get(M, Protocol, mcht_index_key)}
+    , {index_key, pg_protocol:get(M, Protocol, index_key)}
   ] ++ pg_model:to(M, Protocol, proplists),
 
-  Repo = pg_model:new(repo_mcht_txn_log_pt, VL),
+  Repo = pg_model:new(repo_txn_log_pt, VL),
   pg_repo:save(Repo).

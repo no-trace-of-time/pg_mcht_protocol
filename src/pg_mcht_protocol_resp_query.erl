@@ -52,8 +52,12 @@
 -export_type([?TXN/0]).
 -export_records([?TXN]).
 
+%%-------------------------------------------------------------------
 
 sign_fields() ->
+  sign_fields(dict_order).
+
+sign_fields(doc_order) ->
   [
     mcht_id
     , txn_date
@@ -67,6 +71,22 @@ sign_fields() ->
     , limit
     , resp_code
     , resp_msg
+
+  ];
+sign_fields(dict_order) ->
+  [
+    limit
+    , mcht_id
+    , orig_resp_code
+    , orig_resp_msg
+    , query_id
+    , resp_code
+    , resp_msg
+    , settle_date
+    , txn_amt
+    , txn_date
+    , txn_seq
+    , txn_time
 
   ].
 

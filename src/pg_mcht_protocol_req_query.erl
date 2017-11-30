@@ -46,7 +46,19 @@
 -export_records([?P]).
 
 
+%%-------------------------------------------------------------------
 sign_fields() ->
+  sign_fields(dict_order).
+
+sign_fields(doc_order) ->
+  [
+    mcht_id
+    , txn_date
+    , txn_seq
+    , txn_time
+
+  ];
+sign_fields(dict_order) ->
   [
     mcht_id
     , txn_date

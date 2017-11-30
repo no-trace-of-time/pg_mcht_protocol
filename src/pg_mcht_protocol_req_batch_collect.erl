@@ -59,6 +59,9 @@
 
 %%-------------------------------------------------------------------
 sign_fields() ->
+  sign_fields(dict_order).
+
+sign_fields(doc_order) ->
   [
     mcht_id
     , txn_date
@@ -71,7 +74,24 @@ sign_fields() ->
     , batch_no
     , file_content
     , req_reserved
+
+  ];
+sign_fields(dict_order) ->
+  [
+    batch_no
+    , file_content
+    , mcht_id
+    , order_desc
+    , req_reserved
+    , txn_amt
+    , txn_count
+    , txn_date
+    , txn_seq
+    , txn_time
+    , back_url
+
   ].
+%%-------------------------------------------------------------------
 
 options() ->
   #{

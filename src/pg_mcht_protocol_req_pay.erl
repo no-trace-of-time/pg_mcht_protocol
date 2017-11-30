@@ -11,13 +11,13 @@
 -include_lib("eunit/include/eunit.hrl").
 -include_lib("mixer/include/mixer.hrl").
 
--behaviour(pg_model).
+-behavior(pg_convert).
 -behaviour(pg_protocol).
 -behaviour(pg_mcht_protocol).
 
 %% API
-%% callbacks of mcht_protocol
--mixin([{pg_mcht_protocol, [
+%% callbacks of protocol
+-mixin([{pg_protocol, [
   pr_formatter/1
   , in_2_out_map/0
 ]}]).
@@ -33,13 +33,13 @@
 
 -record(?P, {
   mcht_id = 9999 :: pg_mcht_protocol:mcht_id()
-  , mcht_txn_date = <<>> :: pg_mcht_protocol:txn_date()
-  , mcht_txn_time = <<>> :: pg_mcht_protocol:txn_time()
-  , mcht_txn_seq = <<"9999">> :: pg_mcht_protocol:txn_seq()
-  , mcht_txn_amt = 0 :: pg_mcht_protocol:txn_amt()
-  , mcht_order_desc = <<>> :: pg_mcht_protocol:order_desc()
-  , mcht_front_url = <<>> :: pg_mcht_protocol:url()
-  , mcht_back_url
+  , txn_date = <<>> :: pg_mcht_protocol:txn_date()
+  , txn_time = <<>> :: pg_mcht_protocol:txn_time()
+  , txn_seq = <<"9999">> :: pg_mcht_protocol:txn_seq()
+  , txn_amt = 0 :: pg_mcht_protocol:txn_amt()
+  , order_desc = <<>> :: pg_mcht_protocol:order_desc()
+  , front_url = <<>> :: pg_mcht_protocol:url()
+  , back_url
   , signature = <<"9">> :: pg_mcht_protocol:signature()
   , bank_card_no = <<>> :: pg_mcht_protocol:bank_card_no()
   , bank_id = <<>> :: pg_mcht_protocol:bank_id()
@@ -50,19 +50,36 @@
 -export_records([?P]).
 
 
-
+%%-------------------------------------------------------------------
 sign_fields() ->
+  sign_fields(dict_order).
+
+sign_fields(doc_order) ->
   [
     mcht_id
-    , mcht_txn_date
-    , mcht_txn_seq
-    , mcht_txn_time
-    , mcht_txn_amt
+    , txn_date
+    , txn_seq
+    , txn_time
+    , txn_amt
     , bank_id
-    , mcht_order_desc
-    , mcht_back_url
-    , mcht_front_url
+    , order_desc
+    , back_url
+    , front_url
     , bank_card_no
+
+  ];
+sign_fields(dict_order) ->
+  [
+    bank_card_no
+    , bank_id
+    , mcht_id
+    , order_desc
+    , txn_amt
+    , txn_date
+    , txn_seq
+    , txn_time
+    , back_url
+    , front_url
 
   ].
 

@@ -10,7 +10,6 @@
 -author("jiarj").
 -include_lib("eunit/include/eunit.hrl").
 -include_lib("mixer/include/mixer.hrl").
--behaviour(pg_model).
 -behaviour(pg_protocol).
 -behaviour(pg_mcht_protocol).
 
@@ -33,15 +32,15 @@
 
 -record(?TXN, {
   mcht_id = 9999
-  , mcht_txn_date = <<>>
-  , mcht_txn_time = <<>>
-  , mcht_txn_seq = <<"9999">>
-  , mcht_txn_amt = 0
+  , txn_date = <<>>
+  , txn_time = <<>>
+  , txn_seq = <<"9999">>
+  , txn_amt = 0
   , signature = <<"9">>
   , txn_status = success
   , resp_code = <<"00">>
   , resp_msg = <<"success">>
-  , mcht_back_url = <<>>
+  , back_url = <<>>
   , settle_date = <<>>
   , query_id = <<>>
   , limit = 0
@@ -53,15 +52,33 @@
 
 
 sign_fields() ->
+  sign_fields(dict_order).
+
+sign_fields(doc_order) ->
   [
     mcht_id
-    , mcht_txn_date
-    , mcht_txn_seq
+    , txn_date
+    , txn_seq
+    , txn_amt
     , query_id
     , settle_date
     , limit
     , resp_code
     , resp_msg
+
+  ];
+sign_fields(dict_order) ->
+  [
+    limit
+    , mcht_id
+    , query_id
+    , resp_code
+    , resp_msg
+    , settle_date
+    , txn_amt
+    , txn_date
+    , txn_seq
+
   ].
 
 options() ->

@@ -10,7 +10,7 @@
 -author("jiarj").
 -include_lib("eunit/include/eunit.hrl").
 -include_lib("mixer/include/mixer.hrl").
--behaviour(pg_model).
+-behaviour(pg_convert).
 -behaviour(pg_protocol).
 -behaviour(pg_mcht_protocol).
 
@@ -32,16 +32,17 @@
 -define(TXN, ?MODULE).
 
 -record(?TXN, {
-  mcht_id = 9999
-  , mcht_txn_date = <<>>
-  , mcht_txn_seq = <<"9999">>
+  id = 9999
+  , txn_date = <<>>
+  , txn_seq = <<"9999">>
+  , txn_amt
   , query_id
   , settle_date
   , limit = 0
   , resp_code
   , resp_msg
-  , mcht_front_url
-  , mcht_back_url
+  , front_url
+  , back_url
   , signature
 }).
 
@@ -50,16 +51,34 @@
 -export_records([?TXN]).
 
 
+%%-------------------------------------------------------------------
 sign_fields() ->
+  sign_fields(dict_order).
+
+sign_fields(doc_order) ->
   [
     mcht_id
-    , mcht_txn_date
-    , mcht_txn_seq
+    , txn_date
+    , txn_seq
+    , txn_amt
     , query_id
     , settle_date
     , limit
     , resp_code
     , resp_msg
+
+  ];
+sign_fields(dict_order) ->
+  [
+    limit
+    , mcht_id
+    , query_id
+    , resp_code
+    , resp_msg
+    , settle_date
+    , txn_amt
+    , txn_date
+    , txn_seq
 
   ].
 
@@ -76,5 +95,5 @@ save(M, Protocol) when is_atom(M), is_record(Protocol, ?TXN) ->
   VL = pg_model:get_proplist(M, Protocol, [query_id, settle_date, resp_code, resp_msg])
     ++ [{txn_status, xfutils:up_resp_code_2_txn_status(pg_model:get(M, Protocol, resp_code))}],
 
-  PK = pg_mcht_protocol:get(M, Protocol, mcht_index_key),
-  pg_repo:update_pk(repo_mcht_txn_log_pt, PK, VL).
+  PK = pg_protocol:get(M, Protocol, index_key),
+  pg_repo:update_pk(repo_txn_log_pt, PK, VL).

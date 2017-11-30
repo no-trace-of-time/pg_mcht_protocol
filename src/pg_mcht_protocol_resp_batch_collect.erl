@@ -54,6 +54,9 @@
 
 %%-------------------------------------------------------------------
 sign_fields() ->
+  sign_fields(dict_order).
+
+sign_fields(doc_order) ->
   [
     mcht_id
     , txn_date
@@ -62,6 +65,17 @@ sign_fields() ->
     , query_id
     , resp_code
     , resp_msg
+
+  ];
+sign_fields(dict_order) ->
+  [
+    mcht_id
+    , query_id
+    , resp_code
+    , resp_msg
+    , txn_amt
+    , txn_date
+    , txn_seq
 
   ].
 
